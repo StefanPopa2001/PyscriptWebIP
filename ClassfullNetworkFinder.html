@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
+    <link rel="stylesheet" href="./style.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+
+    <meta charset="UTF-8">
+    <title>Rooter-Ed - Trouver le réseau d'une IP</title>
+
+
+
+</head>
+
+<header>
+    <h2>Trouver le réseau d'une IP</h2>
+    <h3>Permets de trouver des informations relatives au réseau de l'IP/masque entrés (classfull)</h3>
+    <div class="return" ><a href="Accueil.html">Retourner au menu principal</a></div>
+</header>
+
+<body>
+
+<div class="contenuCentre">
+
+    <label class="smallText">
+        Adresse IP : &zwnj;
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o1" value="0">.
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o2" value="0">.
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o3" value="0">.
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o4"value="0">
+    </label>
+
+
+
+</div>
+<br>
+<div class="contenuCentre">
+
+    <label class="smallText">
+        Masque  &zwnj;  &zwnj; : &zwnj;
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="m1" value="0">.
+    </label>
+    <label>
+        <input  type="text" maxlength="3" id="m2" value="0">.
+    </label>
+    <label>
+        <input  type="text" maxlength="3" id="m3" value="0">.
+    </label>
+    <label>
+        <input  type="text" maxlength="3" id="m4"value="0">
+    </label>
+</div>
+<br>
+<div class="contenuCentre">
+
+    <button py-onClick="ClassfullNetworkFinder()" id="BoutonAleatoire2" class="smallButton">
+        Confirmer
+    </button>
+
+</div>
+<br>
+
+<div class="contenuCentre">
+    <b class="smallText"><label id="result"></label></b>
+</div>
+
+<div class="contenuCentre">
+    <b class="smallText"><label id="result2"></label></b>
+</div>
+
+<div class="contenuCentre">
+    <b class="smallText"><label id="result3"></label></b>
+</div>
+
+
+<py-env>
+    - paths:
+        - ./outils.py
+</py-env>
+
+<py-script>
+    import js
+    from outils import verifierIntegriteIP,transformationEnVecteur,verifierIntegriteMasque,trouverAdresseReseau,TrouverAdresseBroadcastClassfull,TrouverAdresseSousReseau
+
+    def ClassfullNetworkFinder():
+
+        ip = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
+
+        if(transformationEnVecteur(ip)==False):
+            Element("result").write("IP invalide (vous avez peut-être encodé moins de 4 octets ou du texte?")
+            return 0
+        else:
+            ip = transformationEnVecteur(ip)
+
+        if(verifierIntegriteIP(ip)==False):
+            Element("result").write("IP invalide (Vous avez encodé une IP négative ou trop grande?)")
+            return 0
+
+
+        masque = Element('m1').element.value + " " + Element('m2').element.value +" "+ Element('m3').element.value +" "+ Element('m4').element.value
+
+        if(transformationEnVecteur(masque)==False):
+            Element("result").write("Masque invalide (vous avez peut-être encodé moins de 4 octets ou du texte?")
+            return 0
+        else:
+            masque = transformationEnVecteur(masque)
+
+        if(verifierIntegriteMasque(masque)==False):
+            Element("result").write("Masque invalide (Vous avez encodé un masque négatif ou trop grand?)")
+            return 0
+
+
+        adresseReseau = trouverAdresseReseau(ip)
+
+        adresseBroadcast = TrouverAdresseBroadcastClassfull(ip)
+
+        adresseSR = TrouverAdresseSousReseau(ip,masque)
+
+        texte1 = "Adresse du réseau: ",adresseReseau
+        texte2 = "Adresse de broadcast réseau: ",adresseBroadcast
+        texte3 = "Adresse du sous-réseau: ",adresseSR
+
+        Element("result").write(texte1)
+        Element("result2").write(texte2)
+        Element("result3").write(texte3)
+
+</py-script>
+
+
+
+
+
+</body>
+
+
+</html>
