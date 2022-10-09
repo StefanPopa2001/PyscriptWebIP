@@ -33,8 +33,10 @@ def getNotationCIDR(masque):
 
     compteur = 0
 
-    for octet in masque:
-        octetBinare = bin(octet)[2:]
+    masqueDivise = masque.split()
+
+    for octet in masqueDivise:
+        octetBinare = bin(int(octet))[2:]
         
         for bit in octetBinare:
             if(bit == '1'):
