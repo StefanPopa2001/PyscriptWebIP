@@ -15,23 +15,18 @@
 </head>
 
 <header>
-    <h2>Double netwrok belonging check</h2>
-    <h3>Dtermines if two machines are considering each other in the same network</h3>
-    <div class="return" ><a href="Accueil.html">Return to the main menu</a></div>
+    <h2>Appartenance réseau de deux machines</h2>
+    <h3>Détermine si 2 machines se considèrent ou non dans le même réseau</h3>
+    <div class="return" ><a href="Accueil.html">Retour au menu principal</a></div>
 </header>
 
 <body>
 
+<h3>Machine A</h3>
 <div class="contenuCentre">
-    <h4>Machine A</h4>
-</div>
-
-<div class="contenuCentre">
-
-
 
     <label class="smallText">
-        IP Adress : &zwnj;
+        Adresse IP : &zwnj;
     </label>
 
     <label>
@@ -57,7 +52,7 @@
 <div class="contenuCentre">
 
     <label class="smallText">
-        Mask  &zwnj;  &zwnj;  &zwnj; : &zwnj;
+        Masque  &zwnj;  &zwnj;  : &zwnj;
     </label>
 
     <label>
@@ -77,16 +72,13 @@
 
 <br>
 
-<div class="contenuCentre">
-    <h4>Machine B</h4>
-</div>
-
+<h3>Machine B</h3>
 <div class="contenuCentre">
 
 
 
     <label class="smallText">
-        IP Adress : &zwnj;
+        Adresse IP : &zwnj;
     </label>
 
     <label>
@@ -105,14 +97,14 @@
         <input  type="text" maxlength="3" id="o4b"value="0">
     </label>
 
-
-
 </div>
+
 <br>
+
 <div class="contenuCentre">
 
     <label class="smallText">
-        Mask  &zwnj;  &zwnj;  &zwnj; : &zwnj;
+        Masque  &zwnj;  &zwnj;  : &zwnj;
     </label>
 
     <label>
@@ -133,61 +125,21 @@
 
 <div class="contenuCentre">
 
-    <button pys-onClick="ClassfullClassFinder" id="issou" class="smallButton">
-        Confirm
+    <button py-onClick="ClassfullClassFinder()" id="RandomButton" class="smallButton">
+        Confirmer
     </button>
 
 </div>
 <br>
 
 <div class="contenuCentre">
-    <b class="smallText">Resultat : <label id="result"></label></b>
+    <b class="smallText"><label id="result"></label></b>
 </div>>
 
 <py-script>
     import js
 
     def ClassfullClassFinder(e):
-
-        adresseIP = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
-
-        octets = adresseIP.split()
-
-        isValid = True
-
-        for octet in octets:
-            if(int(octet)>255 or int(octet)<0):
-                isValid = False
-
-        o = octets[0]
-
-        octets[0] = int(o)
-
-        texte = ""
-
-        octets[0] = int(octets[0])
-
-        if(octets[0]==127 or octets[0]==0):
-            texte="Classe reservee"
-        elif(octets[0]>=0 and octets[0]<=127):
-            texte = "Classe A - Masque 255.0.0.0 - Avec une classe d'adresse A en classfull, on peut concevoir 128 réseaux de 16 777 214 machines"
-
-        elif(octets[0]>=128 and octets[0]<=191):
-            texte = "Classe B - Masque 255.255.0.0 - Avec une classe d'adresse B en classfull, on peut concevoir 16384 réseaux de 65 534 machines"
-
-        elif(octets[0]>=192 and octets[0]<=223):
-            texte = "Classe C - Masque 255.255.255.0 - Avec une classe d'adresse C en classfull, on peut concevoir 2 097 152 réseaux de 254 machines"
-
-        elif(octets[0]>=224 and octets[0]<=239):
-            ptexte = "Classe D - Pas de masque - Plage d'adresses reservée (multicast)"
-
-        elif(octets[0]>=240 and octets[0]<=255):
-            texte = "Classe E - Pas de masque - Plage d'adresses reservée (expériences protocoles)"
-
-        if(isValid):
-            pyscript.write("result", texte)
-        else:
-            pyscript.write("result", "Adresse IP invalide")
 
 </py-script>
 

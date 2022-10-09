@@ -15,9 +15,9 @@
 </head>
 
 <header>
-    <h2>CNetwork belonging check</h2>
-    <h3>Allows you to if the inputed IP adress belongs to the inputed network</h3>
-    <div class="return" ><a href="Accueil.html">Return to the main menu</a></div>
+    <h2>Trouver l'appartenance d'une IP</h2>
+    <h3>Permets de trouver si une IP + masque appartiens à l'IP entrée</h3>
+    <div class="return" ><a href="Accueil.html">Retourner au menu principal</a></div>
 </header>
 
 <body>
@@ -25,7 +25,7 @@
 <div class="contenuCentre">
 
     <label class="smallText">
-        IP Adress : &zwnj;
+        Adresse IP: &zwnj;
     </label>
 
     <label>
@@ -41,7 +41,11 @@
     </label>
 
     <label>
-        <input  type="text" maxlength="3" id="o4"value="0">
+        <input  type="text" maxlength="3" id="o4"value="0">-
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="CIDR"value="/24">
     </label>
 
 
@@ -51,20 +55,20 @@
 <div class="contenuCentre">
 
     <label class="smallText">
-        Mask  &zwnj;  &zwnj;  &zwnj; : &zwnj;
+        Masque  &zwnj;  &zwnj;  &zwnj; : &zwnj;
     </label>
 
     <label>
-        <input  type="text" maxlength="3" id="m1" value="0">.
+        <input  type="text" maxlength="3" id="m1">.
     </label>
     <label>
-        <input  type="text" maxlength="3" id="m2" value="0">.
+        <input  type="text" maxlength="3" id="m2">.
     </label>
     <label>
-        <input  type="text" maxlength="3" id="m3" value="0">.
+        <input  type="text" maxlength="3" id="m3">.
     </label>
     <label>
-        <input  type="text" maxlength="3" id="m4"value="0">
+        <input  type="text" maxlength="3" id="m4">
     </label>
 </div>
 
@@ -74,7 +78,7 @@
 <div class="contenuCentre">
 
     <label class="smallText">
-        Network  &zwnj; :&zwnj;
+        IP Reseau  &zwnj; : &zwnj; &zwnj;
     </label>
 
     <label>
@@ -95,61 +99,123 @@
 
 <div class="contenuCentre">
 
-    <button pys-onClick="ClassfullClassFinder" id="issou" class="smallButton">
-        Confirm
+    <button py-onClick="trouver_appartenance()" id="randomButton" class="smallButton">
+        Confirmer
     </button>
 
 </div>
 <br>
 
 <div class="contenuCentre">
-    <b class="smallText">Resultat : <label id="result"></label></b>
+    <b class="smallText"> <label id="result"></label></b>
 </div>>
 
 <py-script>
     import js
+    import ipaddress
 
-    def ClassfullClassFinder(e):
+    def trouver_appartenance():
 
-        adresseIP = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
+        IPMachine = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
+        MasqueMachine = Element('m1').element.value + " " + Element('m2').element.value +" "+ Element('m3').element.value +" "+ Element('m4').element.value
+        MasqueMachineCIDR = Element('CIDR').element.value
+        IPReseau = Element('n1').element.value + " " + Element('n2').element.value +" "+ Element('n3').element.value +" "+ Element('n4').element.value
 
-        octets = adresseIP.split()
+        valid = True
+        valid = check_validite_IP(IPMachine,MasqueMachine,MasqueMachineCIDR)
+        if(valid==False):
+            print("IP entrée / masque CIDR entré erronés")
 
-        isValid = True
+        if(len(MasqueMachine)>3):
+            print("Prise en charge du masque classique")
+            valid = verifierIntegriteMasque(MasqueMachine)
+            MasqueMachine=getNotationCIDR(MasqueMachine)
+            MasqueMachine = "/",str(MasqueMachine)
 
-        for octet in octets:
-            if(int(octet)>255 or int(octet)<0):
-                isValid = False
+        elif(len(MasqueMachineCIDR)==3):
+            print("Prise en charge du masque CIDR")
+            MasqueMachine=MasqueMachineCIDR
 
-        o = octets[0]
 
-        octets[0] = int(o)
 
-        texte = ""
+        IPMachine = IPMachine.replace(" ",".")
+        IPReseau = IPReseau.replace(" ",".")
+        IPMachine = IPMachine+MasqueMachine[0]+MasqueMachine[1]
+        try:
+            ipn1 = ipaddress.ip_network(IPMachine,strict=False)
+            ipn2 = ipaddress.ip_network(IPReseau)
 
-        octets[0] = int(octets[0])
+            if(ipn1.overlaps(ipn2) == True and valid == True):
+                Element("result").write("L'IP appartiens au réseau")
+            elif(valid==True):
+                Element("result").write("L'IP n'appartiens pas au réseau")
 
-        if(octets[0]==127 or octets[0]==0):
-            texte="Classe reservee"
-        elif(octets[0]>=0 and octets[0]<=127):
-            texte = "Classe A - Masque 255.0.0.0 - Avec une classe d'adresse A en classfull, on peut concevoir 128 réseaux de 16 777 214 machines"
+            if(valid == False):
+                Element("result").write("Données erronées")
 
-        elif(octets[0]>=128 and octets[0]<=191):
-            texte = "Classe B - Masque 255.255.0.0 - Avec une classe d'adresse B en classfull, on peut concevoir 16384 réseaux de 65 534 machines"
+        except:
+            Element("result").write("Données erronées - Erreur dans les IP/masque")
 
-        elif(octets[0]>=192 and octets[0]<=223):
-            texte = "Classe C - Masque 255.255.255.0 - Avec une classe d'adresse C en classfull, on peut concevoir 2 097 152 réseaux de 254 machines"
+    def getNotationCIDR(masque):
+        compteur = 0
+        try:
+            masqueDivise = masque.split()
+            for octet in masqueDivise:
+                octetBinare = bin(int(octet))[2:]
+                for bit in octetBinare:
+                    if(bit == '1'):
+                        compteur = compteur +1
+        except:
+            Element("result").write("Données erronées")
 
-        elif(octets[0]>=224 and octets[0]<=239):
-            ptexte = "Classe D - Pas de masque - Plage d'adresses reservée (multicast)"
+        return compteur
 
-        elif(octets[0]>=240 and octets[0]<=255):
-            texte = "Classe E - Pas de masque - Plage d'adresses reservée (expériences protocoles)"
 
-        if(isValid):
-            pyscript.write("result", texte)
+    def check_validite_IP(IPMachine, MasqueMachine, MasqueMachineCIDR):
+        valid = True
+
+        if(MasqueMachine.replace(" ","")=="" and MasqueMachineCIDR.replace(" ","")==""):
+            valid = False
+
+        MasqueMachineDecoupe = MasqueMachine.split()
+
+        if(MasqueMachine != "" and MasqueMachineCIDR ==""):
+            for o in MasqueMachineDecoupe:
+                if(int(o) > 255 or int(o)<0):
+                    valid = False
+
         else:
-            pyscript.write("result", "Adresse IP invalide")
+            MasqueMachineCIDR = MasqueMachineCIDR.replace("/","")
+            if(int(MasqueMachineCIDR) > 32 or int(MasqueMachineCIDR)<0):
+                valid = False
+
+        return valid
+
+    def verifierIntegriteMasque(masque):
+        masqueValide = True
+
+        masque = masque.split()
+
+        if(len(masque)!=4):
+            masqueValide = False
+            return masqueValide
+
+        if(int(masque[0])==0):
+            masqueValide = False
+            return masqueValide
+
+        for octet in masque:
+            if (int(octet)>255 or int(octet) <0):
+                masqueValide = False
+                return masqueValide
+
+        x = range(1,4)
+        for n in x:
+            if(int(masque[n])>int(masque[n-1])):
+                masqueValide = False
+
+        return masqueValide
+
 
 </py-script>
 
