@@ -59,47 +59,32 @@
 
 <py-script>
     import js
-
     def ClassfullClassFinder():
         try:
             adresseIP = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
-
             isValid = True
-
             octets = adresseIP.split()
-
             if(len(octets) != 4):
                 isValid = False
-
             for octet in octets:
                 if(int(octet)>255 or int(octet)<0):
                     isValid = False
-
             o = octets[0]
-
             octets[0] = int(o)
-
             texte = ""
-
             octets[0] = int(octets[0])
-
             if(octets[0]==127 or octets[0]==0):
                 texte="Classe reservee"
             elif(octets[0]>=0 and octets[0]<=127):
                 texte = "Classe A - Masque 255.0.0.0 - Avec une classe d'adresse A en classfull, on peut concevoir 128 réseaux de 16 777 214 machines"
-
             elif(octets[0]>=128 and octets[0]<=191):
                 texte = "Classe B - Masque 255.255.0.0 - Avec une classe d'adresse B en classfull, on peut concevoir 16384 réseaux de 65 534 machines"
-
             elif(octets[0]>=192 and octets[0]<=223):
                 texte = "Classe C - Masque 255.255.255.0 - Avec une classe d'adresse C en classfull, on peut concevoir 2 097 152 réseaux de 254 machines"
-
             elif(octets[0]>=224 and octets[0]<=239):
                 texte = "Classe D - Pas de masque - Plage d'adresses reservée (multicast)"
-
             elif(octets[0]>=240 and octets[0]<=255):
                 texte = "Classe E - Pas de masque - Plage d'adresses reservée (expériences protocoles)"
-
             if(isValid):
                 Element("result").write(texte)
             else:

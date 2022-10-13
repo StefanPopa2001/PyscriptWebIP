@@ -93,14 +93,34 @@
 <py-script>
     import js
     import ipaddress
+    import re
     from ipaddress import IPv4Interface
-
+    #Vérifier l'intégrité d'un masque classique
+    def verifier_intergrite_masque_classique(masque):
+        masqueValide = True
+        maskInString = str(masque)
+        if (re.search('[a-zA-Z_]',maskInString)):
+            masqueValide = False
+            return masqueValide
+        masqueV = masque.split()
+        print(masqueV)
+        if(len(masqueV)!=4 or maskInString.replace(" ","")==""):
+            masqueValide = False
+            return masqueValide
+        for octet in masqueV:
+            if (int(octet)>255 or int(octet) <0):
+                masqueValide = False
+                return masqueValide
+        x = range(1,4)
+        for n in x:
+            if(int(masqueV[n])>int(masqueV[n-1])):
+                masqueValide = False
+                return masqueValide
+        return masqueValide
     def trouver_Broadcast(IP,Masque):
         IP = IP.replace(" ",".")
         ipn= ipaddress.ip_network(str(IP)+"/"+str(Masque),strict=False)
-
         return ipn.broadcast_address
-
     def getNotationCIDR(masque):
         compteur = 0
         masqueDivise = masque.split()
@@ -110,34 +130,36 @@
                 if(bit == '1'):
                     compteur = compteur +1
         return compteur
-
     def trouver_Adresse_Reseau(IP,Masque):
         IP = IP.replace(" ",".")
         ifc = IPv4Interface(str(IP)+"/"+str(Masque))
         return(ifc.network)
-
     def trouver_SR(IP,Masque):
         IP = IP.replace(" ",".")
+        if(Masque==0 or Masque==8 or Masque==16 or Masque==24 or Masque==32):
+            return("pas de sous réseau")
         ipn = ipaddress.ip_network(str(IP)+"/"+str(Masque),strict=False)
-        return (list(ipn.subnets())[0])
-
-
+        return (ipn)
     def trouver_appartenance():
-
         IP_Machine_A = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
         Masque_Machine_A = Element('m1').element.value + " " + Element('m2').element.value +" "+ Element('m3').element.value +" "+ Element('m4').element.value
-
-        Masque_Machine_A = getNotationCIDR(Masque_Machine_A)
-
-
-        res1 = trouver_Broadcast(IP_Machine_A,Masque_Machine_A)
-        res2 = trouver_Adresse_Reseau(IP_Machine_A,Masque_Machine_A)
-        res3 =  trouver_SR(IP_Machine_A,Masque_Machine_A)
-
-        Element("result2").write("Adresse du réseau : "+str(res2))
-        Element("result").write("Adresse de broadcast : "+str(res1))
-        Element("result3").write("Adresse du SR : "+str(res3))
-
+        try:
+            if(verifier_intergrite_masque_classique(Masque_Machine_A)==True):
+                Masque_Machine_A = getNotationCIDR(Masque_Machine_A)
+                res1 = trouver_Broadcast(IP_Machine_A,Masque_Machine_A)
+                res2 = trouver_Adresse_Reseau(IP_Machine_A,Masque_Machine_A)
+                res3 = trouver_SR(IP_Machine_A,Masque_Machine_A)
+            else:
+                Element("result").write("Masque entré invalide")
+                Element("result2").write("")
+                Element("result3").write("")
+            Element("result2").write("Adresse du réseau : "+str(res2))
+            Element("result").write("Adresse de broadcast : "+str(res1))
+            Element("result3").write("Adresse du SR : "+str(res3))
+        except:
+            Element("result").write("Données invalides")
+            Element("result2").write("")
+            Element("result3").write("")
 </py-script>
 
 

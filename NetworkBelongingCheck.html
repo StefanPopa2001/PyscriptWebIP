@@ -113,48 +113,34 @@
 <py-script>
     import js
     import ipaddress
-
     def trouver_appartenance():
-
         IPMachine = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
         MasqueMachine = Element('m1').element.value + " " + Element('m2').element.value +" "+ Element('m3').element.value +" "+ Element('m4').element.value
         MasqueMachineCIDR = Element('CIDR').element.value
         IPReseau = Element('n1').element.value + " " + Element('n2').element.value +" "+ Element('n3').element.value +" "+ Element('n4').element.value
-
         valid = True
         valid = check_validite_IP(IPMachine,MasqueMachine,MasqueMachineCIDR)
         if(valid==False):
             print("IP entrée / masque CIDR entré erronés")
-
         if(len(MasqueMachine)>3):
             print("Prise en charge du masque classique")
             valid = verifierIntegriteMasque(MasqueMachine)
             MasqueMachine=getNotationCIDR(MasqueMachine)
             MasqueMachine = "/",str(MasqueMachine)
-
         elif(len(MasqueMachineCIDR)==3):
             print("Prise en charge du masque CIDR")
             MasqueMachine=MasqueMachineCIDR
-
-
-
         IPMachine = IPMachine.replace(" ",".")
         IPReseau = IPReseau.replace(" ",".")
-
-
         try:
             IPMachine = IPMachine+MasqueMachine[0]+MasqueMachine[1]+MasqueMachine[2]
-
         except:
             IPMachine = IPMachine+MasqueMachine[0]+MasqueMachine[1]
-
         try:
             ipn1 = ipaddress.ip_network(IPMachine,strict=False)
             ipn2 = ipaddress.ip_network(IPReseau)
-
             print(ipn1)
             print(ipn2)
-
             if(ipn1.overlaps(ipn2) == True and valid == True):
                 Element("result").write("L'IP appartiens au réseau")
             elif(valid==True):
@@ -162,10 +148,8 @@
 
             if(valid == False):
                 Element("result").write("Données erronées")
-
         except:
             Element("result").write("Données erronées - Erreur dans les IP/masque")
-
     def getNotationCIDR(masque):
         compteur = 0
         try:
@@ -177,56 +161,39 @@
                         compteur = compteur +1
         except:
             Element("result").write("Données erronées")
-
         return compteur
-
-
     def check_validite_IP(IPMachine, MasqueMachine, MasqueMachineCIDR):
         valid = True
-
         if(MasqueMachine.replace(" ","")=="" and MasqueMachineCIDR.replace(" ","")==""):
             valid = False
-
         MasqueMachineDecoupe = MasqueMachine.split()
-
         if(MasqueMachine != "" and MasqueMachineCIDR ==""):
             for o in MasqueMachineDecoupe:
                 if(int(o) > 255 or int(o)<0):
                     valid = False
-
         else:
             MasqueMachineCIDR = MasqueMachineCIDR.replace("/","")
             if(int(MasqueMachineCIDR) > 32 or int(MasqueMachineCIDR)<0):
                 valid = False
-
         return valid
-
     def verifierIntegriteMasque(masque):
         masqueValide = True
-
         masque = masque.split()
-
         if(len(masque)!=4):
             masqueValide = False
             return masqueValide
-
         if(int(masque[0])==0):
             masqueValide = False
             return masqueValide
-
         for octet in masque:
             if (int(octet)>255 or int(octet) <0):
                 masqueValide = False
                 return masqueValide
-
         x = range(1,4)
         for n in x:
             if(int(masque[n])>int(masque[n-1])):
                 masqueValide = False
-
         return masqueValide
-
-
 </py-script>
 
 

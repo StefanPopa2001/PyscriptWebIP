@@ -153,45 +153,35 @@
 <py-script>
     import ipaddress
     import re
-
     #Vérifier l'intégrité d'un masque classique
     def verifier_intergrite_masque_classique(masque):
         masqueValide = True
-
         maskInString = str(masque)
         if (re.search('[a-zA-Z_]',maskInString)):
             masqueValide = False
             return masqueValide
-
         masqueV = masque.split()
         print(masqueV)
         if(len(masqueV)!=4 or maskInString.replace(" ","")==""):
             masqueValide = False
             return masqueValide
-
         for octet in masqueV:
             if (int(octet)>255 or int(octet) <0):
                 masqueValide = False
                 return masqueValide
-
         x = range(1,4)
         for n in x:
             if(int(masqueV[n])>int(masqueV[n-1])):
                 masqueValide = False
         return masqueValide
-
     #Vérifier l'intégrité d'un masque CIDR
     def verifier_integrite_masque_CIDR(masque):
         valid = True
-
         masque_decoupe = str(masque).replace("/","")
         masque_decoupe = int(masque_decoupe)
-
         if(masque_decoupe<0 or masque_decoupe >32):
             return False
-
         return masqueValide
-
     #Transforme un masque classique en masque CIDR
     def getNotationCIDR(masque):
         compteur = 0
@@ -202,12 +192,10 @@
                 if(bit == '1'):
                     compteur = compteur +1
         return "/"+str(compteur)
-
     def trouver_masque(masque_classique,masque_CIDR):
         if(masque_classique=="" and masque_CIDR!=""):
             print("Prise en charge du masque CIDR")
             return masque_CIDR
-
         elif(masque_CIDR=="" and masque_classique!=""):
             print("Prise en charge du masque classique")
             print(masque_classique)
@@ -217,33 +205,27 @@
             else:
                 print("masque non valide")
                 return False
-
         elif(masque_classique!="" and masque_CIDR!=""):
             print("Double masque - prise du masque CIDR")
             return masque_CIDR
-
     def getConsidereDansLeReseau(IP1,masque1,IP2,masque2):
         IP1 = IP1.replace(" ",".")
         IP2 = IP2.replace(" ",".")
         ipn1 = ipaddress.ip_network(str(IP1)+""+str(masque1),strict=False)
         ipn2 = ipaddress.ip_network(str(IP2)+""+str(masque2),strict=False)
         return(ipn1.subnet_of(ipn2))
-
     def TrouverReseauMachines():
         try:
             IP_Machine_A = Element('o1a').element.value + " " + Element('o2a').element.value +" "+ Element('o3a').element.value +" "+ Element('o4a').element.value
             Masque_Machine_A = Element('m1a').element.value + " " + Element('m2a').element.value +" "+ Element('m3a').element.value +" "+ Element('m4a').element.value
             Masque_CIDR_Machine_A = Element('CIDRa').element.value
-
             IP_Machine_B = Element('o1b').element.value + " " + Element('o2b').element.value +" "+ Element('o3b').element.value +" "+ Element('o4b').element.value
             Masque_Machine_B = Element('m1b').element.value + " " + Element('m2b').element.value +" "+ Element('m3b').element.value +" "+ Element('m4b').element.value
             Masque_CIDR_Machine_B = Element('CIDRb').element.value
-
             if(getConsidereDansLeReseau(IP_Machine_A,trouver_masque(Masque_Machine_A,Masque_CIDR_Machine_A),IP_Machine_B,trouver_masque(Masque_Machine_B,Masque_CIDR_Machine_B))):
                 Element("result").write("La machine A considère la B dans son réseau")
             else:
                 Element("result").write("La machine A ne considère pas la B dans son réseau")
-
             if(getConsidereDansLeReseau(IP_Machine_B,trouver_masque(Masque_Machine_B,Masque_CIDR_Machine_B),IP_Machine_A,trouver_masque(Masque_Machine_A,Masque_CIDR_Machine_A))):
                 Element("result2").write("La machine B considère la A dans son réseau")
             else:
@@ -251,7 +233,6 @@
         except:
             Element("result").write("Erreur dans les données entrées (masque ou IP erronnées?)")
             Element("result2").write("")
-
 </py-script>
 
 
