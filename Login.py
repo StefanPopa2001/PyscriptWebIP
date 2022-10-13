@@ -26,7 +26,7 @@ def utiliserMDP(mdp):
     mdpEntre=mdpEntre.encode('utf-8')
     if(bcrypt.checkpw(mdpEntre,mdp)):
         print("Mot de passe corest, renvoi vers l'application...")
-        webbrowser.open('https://projetsysrso.web.app/Accueil.html') 
+        webbrowser.open('https://projetsysrso.web.app/index.html') 
     else:
         print("Mot de passe incorrect, veuillez réesayer...")
         utiliserMDP(mdp)
