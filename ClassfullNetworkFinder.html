@@ -70,7 +70,7 @@
 <br>
 <div class="contenuCentre">
 
-    <button py-onClick="ClassfullNetworkFinder()" id="BoutonAleatoire2" class="smallButton">
+    <button py-onClick="trouver_appartenance()" id="BoutonAleatoire2" class="smallButton">
         Confirmer
     </button>
 
@@ -90,56 +90,53 @@
 </div>
 
 
-<py-env>
-    - paths:
-        - ./outils.py
-</py-env>
-
 <py-script>
     import js
-    from outils import verifierIntegriteIP,transformationEnVecteur,verifierIntegriteMasque,trouverAdresseReseau,TrouverAdresseBroadcastClassfull,TrouverAdresseSousReseau
+    import ipaddress
+    from ipaddress import IPv4Interface
 
-    def ClassfullNetworkFinder():
+    def trouver_Broadcast(IP,Masque):
+        IP = IP.replace(" ",".")
+        ipn= ipaddress.ip_network(str(IP)+"/"+str(Masque),strict=False)
 
-        ip = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
+        return ipn.broadcast_address
 
-        if(transformationEnVecteur(ip)==False):
-            Element("result").write("IP invalide (vous avez peut-être encodé moins de 4 octets ou du texte?")
-            return 0
-        else:
-            ip = transformationEnVecteur(ip)
+    def getNotationCIDR(masque):
+        compteur = 0
+        masqueDivise = masque.split()
+        for octet in masqueDivise:
+            octetBinare = bin(int(octet))[2:]
+            for bit in octetBinare:
+                if(bit == '1'):
+                    compteur = compteur +1
+        return compteur
 
-        if(verifierIntegriteIP(ip)==False):
-            Element("result").write("IP invalide (Vous avez encodé une IP négative ou trop grande?)")
-            return 0
+    def trouver_Adresse_Reseau(IP,Masque):
+        IP = IP.replace(" ",".")
+        ifc = IPv4Interface(str(IP)+"/"+str(Masque))
+        return(ifc.network)
 
-
-        masque = Element('m1').element.value + " " + Element('m2').element.value +" "+ Element('m3').element.value +" "+ Element('m4').element.value
-
-        if(transformationEnVecteur(masque)==False):
-            Element("result").write("Masque invalide (vous avez peut-être encodé moins de 4 octets ou du texte?")
-            return 0
-        else:
-            masque = transformationEnVecteur(masque)
-
-        if(verifierIntegriteMasque(masque)==False):
-            Element("result").write("Masque invalide (Vous avez encodé un masque négatif ou trop grand?)")
-            return 0
+    def trouver_SR(IP,Masque):
+        IP = IP.replace(" ",".")
+        ipn = ipaddress.ip_network(str(IP)+"/"+str(Masque),strict=False)
+        return (list(ipn.subnets())[0])
 
 
-        adresseReseau = trouverAdresseReseau(ip)
+    def trouver_appartenance():
 
-        adresseBroadcast = TrouverAdresseBroadcastClassfull(ip)
+        IP_Machine_A = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
+        Masque_Machine_A = Element('m1').element.value + " " + Element('m2').element.value +" "+ Element('m3').element.value +" "+ Element('m4').element.value
 
-        adresseSR = TrouverAdresseSousReseau(ip,masque)
+        Masque_Machine_A = getNotationCIDR(Masque_Machine_A)
 
-        texte1 = "Adresse du réseau: ",adresseReseau
-        texte2 = "Adresse de broadcast réseau: ",adresseBroadcast
-        texte3 = "Adresse du sous-réseau: ",adresseSR
 
-        Element("result").write(texte1)
-        Element("result2").write(texte2)
-        Element("result3").write(texte3)
+        res1 = trouver_Broadcast(IP_Machine_A,Masque_Machine_A)
+        res2 = trouver_Adresse_Reseau(IP_Machine_A,Masque_Machine_A)
+        res3 =  trouver_SR(IP_Machine_A,Masque_Machine_A)
+
+        Element("result2").write("Adresse du réseau : "+str(res2))
+        Element("result").write("Adresse de broadcast : "+str(res1))
+        Element("result3").write("Adresse du SR : "+str(res3))
 
 </py-script>
 

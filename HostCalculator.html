@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
+    <link rel="stylesheet" href="./style.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+
+
+    <meta charset="UTF-8">
+    <title>Rooter-Ed - Calculer des hôtes</title>
+
+
+
+</head>
+
+<header>
+    <h2>Trouver la faisabilité d'un réseau</h2>
+    <h3>Permets de trouver si un réseau peut accueillir un nombre d'hôtes</h3>
+    <div class="return" ><a href="Accueil.html">Retourner au menu principal</a></div>
+</header>
+
+<body>
+
+<div class="contenuCentre">
+
+    <label class="smallText">
+        IP Reseau de depart :
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o1" value="0">.
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o2" value="0">.
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o3" value="0">.
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="o4"value="0">
+    </label>
+
+
+
+
+</div>
+<br>
+
+<div class="contenuCentre">
+
+    <label class="smallText">
+        Nombre de réseaux :
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="r1"value="0">
+    </label>
+
+</div>
+<br>
+<div class="contenuCentre">
+
+    <label class="smallText">
+        Nombre d'hôtes :
+    </label>
+
+    <label>
+        <input  type="text" maxlength="3" id="m1"value="0">
+    </label>
+
+
+
+</div>
+<br>
+<div class="contenuCentre">
+
+    <button py-onClick="ClassfullClassFinder()" id="boutonAleatoire" class="smallButton">
+        Confirmer
+    </button>
+
+</div>
+
+
+
+
+
+<div class="contenuCentre">
+    <b class="smallText"><label id="result"></label></b>
+</div>
+
+
+<py-script>
+    import js
+
+    def ClassfullClassFinder():
+        try:
+            adresseIP = Element('o1').element.value + " " + Element('o2').element.value +" "+ Element('o3').element.value +" "+ Element('o4').element.value
+
+            isValid = True
+
+            octets = adresseIP.split()
+
+            if(len(octets) != 4):
+                isValid = False
+
+            for octet in octets:
+                if(int(octet)>255 or int(octet)<0):
+                    isValid = False
+
+            o = octets[0]
+
+            octets[0] = int(o)
+
+            texte = ""
+
+            octets[0] = int(octets[0])
+
+            if(octets[0]==127 or octets[0]==0):
+                texte="Classe reservee"
+            elif(octets[0]>=0 and octets[0]<=127):
+                texte = "Classe A - Masque 255.0.0.0 - Avec une classe d'adresse A en classfull, on peut concevoir 128 réseaux de 16 777 214 machines"
+
+            elif(octets[0]>=128 and octets[0]<=191):
+                texte = "Classe B - Masque 255.255.0.0 - Avec une classe d'adresse B en classfull, on peut concevoir 16384 réseaux de 65 534 machines"
+
+            elif(octets[0]>=192 and octets[0]<=223):
+                texte = "Classe C - Masque 255.255.255.0 - Avec une classe d'adresse C en classfull, on peut concevoir 2 097 152 réseaux de 254 machines"
+
+            elif(octets[0]>=224 and octets[0]<=239):
+                texte = "Classe D - Pas de masque - Plage d'adresses reservée (multicast)"
+
+            elif(octets[0]>=240 and octets[0]<=255):
+                texte = "Classe E - Pas de masque - Plage d'adresses reservée (expériences protocoles)"
+
+            if(isValid):
+                Element("result").write(texte)
+            else:
+                Element("result").write("Adresse IP invalide")
+        except:
+            Element("result").write("Adresse IP invalide")
+</py-script>
+
+</body>
+
+
+</html>

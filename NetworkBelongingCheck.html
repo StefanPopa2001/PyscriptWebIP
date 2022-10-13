@@ -8,7 +8,7 @@
 
 
     <meta charset="UTF-8">
-    <title>Rooter-Ed</title>
+    <title>Rooter-Ed - Appartenance d'une IP</title>
 
 
 
@@ -140,10 +140,20 @@
 
         IPMachine = IPMachine.replace(" ",".")
         IPReseau = IPReseau.replace(" ",".")
-        IPMachine = IPMachine+MasqueMachine[0]+MasqueMachine[1]
+
+
+        try:
+            IPMachine = IPMachine+MasqueMachine[0]+MasqueMachine[1]+MasqueMachine[2]
+
+        except:
+            IPMachine = IPMachine+MasqueMachine[0]+MasqueMachine[1]
+
         try:
             ipn1 = ipaddress.ip_network(IPMachine,strict=False)
             ipn2 = ipaddress.ip_network(IPReseau)
+
+            print(ipn1)
+            print(ipn2)
 
             if(ipn1.overlaps(ipn2) == True and valid == True):
                 Element("result").write("L'IP appartiens au réseau")
